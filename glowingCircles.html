@@ -1,0 +1,28 @@
+<html>
+
+<script type='text/javascript' src='js/jquery-3.6.0.min.js'></script>
+<script type='text/javascript' src='js/svgUtil.js'></script>
+<script type='text/javascript' src='js/templates.js'></script>
+
+<body style="background-color: #000;">
+
+<div class='targDv' style="text-align: center;margin-top:calc(50vh - 80px);">
+
+</div>
+
+<script type='text/javascript'>
+
+var optAddr = '0x1FF9aCBA219E14876DBB54eA5d48D61b6684219D';
+
+var myGlow = $( svgUtil.create_glowingCircleIconsFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 8, "pulse": true } ) );
+
+$( '.targDv' ).empty().append( myGlow );
+
+var myCircs = $( svgUtil.create_circleIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 8, "pulse": true } ) );
+
+$( '.targDv' ).append( myCircs );
+
+</script>
+
+</body>
+</html>

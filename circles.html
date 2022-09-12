@@ -1,0 +1,124 @@
+<html>
+
+<script type='text/javascript' src='js/jquery-3.6.0.min.js'></script>
+
+<div class='targDv'>
+
+</div>
+
+<script type='text/javascript'>
+
+create_circleIcon = function( w, h, colArr )
+{
+    var cols = colArr !== undefined ? colArr : [ "#FF0055", "#AA108D", "#5521C6", "#0033FF" ];
+    var s_r = ( w / 2 ) / 6.5; // SmallCircle_Radius
+    var m_strokeW = s_r / 3; // MainCircle_StrokeWidth
+
+    createBubble = function( cx, cy, r, parent )
+    {
+        var circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circ.setAttribute( 'class', 'bubble' );
+        circ.setAttribute('cx', cx);
+        circ.setAttribute('cy', cy);
+        circ.setAttribute('r', r);
+        parent.appendChild( circ );
+    }
+
+
+    var svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svgElement.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    svgElement.setAttribute('width', w + 'px');
+    svgElement.setAttribute('height', h + 'px');
+
+    // BOUNDING BG BOX
+    var svgGroupBox;
+    svgGroupBox = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    svgElement.appendChild(svgGroupBox);
+
+    var circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circ.setAttribute('cx', (w)/2);
+    circ.setAttribute('cy', (h)/2);
+    circ.setAttribute('r', (h-(m_strokeW*2))/2);
+    circ.setAttribute('stroke', '#E8E7E7');
+    circ.setAttribute('stroke-width', m_strokeW);
+    circ.setAttribute('fill', '#F7F6F6');
+    circ.setAttribute( 'shape-rendering', 'geometricPrecision' );
+    svgGroupBox.appendChild( circ );
+
+    // BACKGROUND COLOR BLOCK
+    var svgGroup;
+    svgGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    svgGroup.setAttribute('stroke-linecap', 'square');
+    svgElement.appendChild(svgGroup);
+
+    var cXpos_middle = (h)/2;
+    var cYpos_start = (m_strokeW * 2) + (s_r/1);
+    var yRows = 5;
+
+    for (var i = 0; i < yRows; i++)
+    {
+        createBubble( cXpos_middle, cYpos_start, s_r, svgGroup );
+
+        if ( i < (yRows-1) )
+        {
+            createBubble( cXpos_middle - (s_r * 2.1), cYpos_start + (s_r*1.2), s_r, svgGroup );
+            createBubble( cXpos_middle + (s_r * 2.1), cYpos_start + (s_r*1.2), s_r, svgGroup );
+        }
+
+        if ( i < (yRows-2) )
+        {
+            createBubble( cXpos_middle - (s_r * 4.2), cYpos_start + (s_r*2.4), s_r, svgGroup );
+            createBubble( cXpos_middle + (s_r * 4.2), cYpos_start + (s_r*2.4), s_r, svgGroup );
+        }
+
+        // move down
+        cYpos_start += ( s_r * 2 ) + s_r/2.3;
+    }
+
+    //return (svgElement.outerHTML);
+    var dv = $( '<div style="display:none;position:absolute;width:0;height:0;"></div>' );
+    var id = '_dvcirc' + new Date().getTime();
+
+    dv.attr( 'id', id );
+
+    $( 'body' ).append( dv );
+    dv.html( svgElement.outerHTML );
+
+    var bubbles = $( '.bubble');
+    var iOffset = 0, iCol;
+
+    $.each( bubbles, function( i, circ ){
+
+        if ( ( i - (iOffset * cols.length) ) < cols.length )
+        {
+            // 
+        }
+        else
+        {
+            iOffset ++;
+        }
+
+        iCol = ( i - (iOffset * cols.length) );
+
+        console.log( i, iCol, cols[ iCol ] );
+
+        $( circ ).attr( 'fill', cols[ iCol ] );
+
+    });
+
+    var ret = dv.html();
+
+    dv.remove();
+
+    return ret;
+}
+
+var col1 = [ "#198A00", "#DE2010", "#000000", "#EF7D00" ];
+var col2 = ["#3B38FF","#5042E2","#664CC6","#7C57A9","#92618D","#A76B71","#BD7654","#D38038","#E98A1C","#FF9500"];
+var colMozambique = [ "#007268", "#D30731", "#000000", "#FCE200" ];
+
+$( '.targDv' ).html( create_circleIcon( 100, 100, colMozambique ) );
+
+</script>
+</html>
