@@ -4,23 +4,32 @@
 <script type='text/javascript' src='js/svgUtil.js'></script>
 <script type='text/javascript' src='js/templates.js'></script>
 
-<body style="background-color: #000;">
+<body style="">
 
-<div class='targDv' style="text-align: center;margin-top:calc(50vh - 80px);">
-
-</div>
+<div class='targDark' style="text-align:center;height:35vh;padding-top: 15vh;background-color: #000;"></div>
+<div class='targLight' style="text-align:center;height:35vh;padding-top: 15vh;background-color: #fff;"></div>
 
 <script type='text/javascript'>
 
-var optAddr = '0x1FF9aCBA219E14876DBB54eA5d48D61b6684219D';
+var optAddr = '0x3b8F494542C748Fc6b3f2ab74Fd3e12182826B28'; //'0x1FF9aCBA219E14876DBB54eA5d48D61b6684219D';
 
-var myGlow = $( svgUtil.create_glowingCircleIconsFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 8, "pulse": true } ) );
+var myGlowDark = $( svgUtil.create_glowingCircleIconsFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 8, "pulse": true } ) );
 
-$( '.targDv' ).empty().append( myGlow );
+$( '.targDark' ).empty().append( myGlowDark );
 
-var myCircs = $( svgUtil.create_circleIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 8, "pulse": true } ) );
+var myGlowLight = $( svgUtil.create_glowingCircleIconsFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "none", "strokeWidth": 0, "pulse": true } ) );
 
-$( '.targDv' ).append( myCircs );
+$( '.targLight' ).empty().append( myGlowLight );
+myGlowLight.css( 'filter', 'drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))');
+
+var myCircsDark = $( svgUtil.create_circleIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 8, "pulse": true } ) );
+
+$( '.targDark' ).append( myCircsDark );
+
+var myCircsLight = $( svgUtil.create_circleIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "none", "strokeWidth": 0, "pulse": true } ) );
+
+$( '.targLight' ).append( myCircsLight );
+myCircsLight.css( 'filter', 'drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))');
 
 </script>
 
