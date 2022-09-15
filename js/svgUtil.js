@@ -3,10 +3,29 @@
 
 function svgUtil() {}
 
+svgUtil.paddCols = function( splArr )
+{
+    var ret = [];
+
+    for (var i = 0; i < splArr.length; i++)
+    {
+        var col = splArr[ i ];
+
+        for (var r = 0; r < ( 6 - ( splArr[ i ] ).toString().length ); r++)
+        {
+            col += '0';
+        }
+
+        ret.push( col );
+    }
+
+    return ret;
+}
+
 svgUtil.create_circleIconFromAddress = function( w, h, addr, parm )
 {
     //var cols = colArr !== undefined ? colArr : [ "#FF0055", "#AA108D", "#5521C6", "#0033FF" ];
-    var cols = addr.substring(2).match(/.{1,6}/g);
+    var cols = svgUtil.paddCols( addr.substring(2).match(/.{1,6}/g) );
     var circStroke = parm !== undefined && parm.stroke !== undefined ? parm.stroke : '#fff';
     var circFill = parm !== undefined && parm.fill !== undefined ? parm.fill : '#000'; //'rgba(232,231,232,0.25)';
 
@@ -129,7 +148,7 @@ svgUtil.create_circleIconFromAddress = function( w, h, addr, parm )
 svgUtil.create_glowingCircleIconsFromAddress = function( w, h, addr, parm )
 {
     //var cols = colArr !== undefined ? colArr : [ "#FF0055", "#AA108D", "#5521C6", "#0033FF" ];
-    var cols = addr.substring(2).match(/.{1,6}/g);
+    var cols = svgUtil.paddCols( addr.substring(2).match(/.{1,6}/g) );
     var circStroke = parm !== undefined && parm.stroke !== undefined ? parm.stroke : '#fff';
     var circFill = parm !== undefined && parm.fill !== undefined ? parm.fill : '#000'; //'rgba(232,231,232,0.25)';
 
@@ -339,7 +358,7 @@ svgUtil.createGlowDefs = function( colors )
 
         var def = `<radialGradient id="` + radId + `">
                         <stop style="stop-color:#909090;stop-opacity:0" />
-                        <stop style="stop-color:#` + col + `;stop-opacity:0.85" />
+                        <stop style="stop-color:#` + col + `;stop-opacity:0.5" />
                     </radialGradient>
                     <filter id="` + glowId + `" width="300%" height="300%" x="-50%" y="-50%">
                         <feGaussianBlur in="thicken" stdDeviation="5" result="blurred" />
