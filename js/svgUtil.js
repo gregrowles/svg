@@ -74,7 +74,7 @@ svgUtil.create_circleIconFromAddress = function( w, h, addr, parm )
     var circStroke = parm !== undefined && parm.stroke !== undefined ? parm.stroke : '#fff';
     var circFill = parm !== undefined && parm.fill !== undefined ? parm.fill : '#000'; //'rgba(232,231,232,0.25)';
     var rows = parm?.rows || 3;
-    var circStrokeW = parm !== undefined ? parm.strokeWidth : m_strokeW;
+    var circStrokeW = parm.strokeWidth !== undefined ? parm.strokeWidth : m_strokeW;
 
     createBubble = function( cx, cy, r, parent, seqId )
     {
@@ -91,10 +91,9 @@ svgUtil.create_circleIconFromAddress = function( w, h, addr, parm )
 
     var yRows = (rows * 2) - 1; //5 = (3 rows x 2 - 1); also that's a total of 19 shapes (3 x 3 x 2 - 1)
     var s_r = ( h ) / 2 / (yRows); //  / 2 because this is a radius value, not diameter
-    //var yRows = 5;
-    //var s_r = ( w / 2 ) / (yRows + 1.5); // 6.5 // SmallCircle_Radius
-    var m_strokeW = s_r / (yRows - 2); // 3 // MainCircle_StrokeWidth
-    var circStrokeW = parm !== undefined ? parm.strokeWidth : m_strokeW;
+
+    var m_strokeW = s_r / rows; // 3 // MainCircle_StrokeWidth
+    var circStrokeW = parm.strokeWidth !== undefined ? parm.strokeWidth : m_strokeW;
     var h_rad = ( ( h / 2 )  ) / (yRows);
     var w_rad = ( ( w / 2 ) ) / rows;
 
@@ -139,7 +138,7 @@ svgUtil.create_circleIconFromAddress = function( w, h, addr, parm )
     var cXpos_middle = h/2;
     var cYpos_start = s_r;
     var counter = 1;
-    var xFactor = ( w_rad > h_rad ? ((w_rad-(s_r/1.66))/10) : h_rad/10 );
+    var xFactor = s_r; //(s_r/ (rows*rows) ) ; //( w_rad > h_rad ? ((w_rad-(s_r/1.66))/10) : h_rad/10 );
 
     console.log( 'yRows', yRows, 'rows', rows );
     console.log( 'w-rad', w_rad );
@@ -155,8 +154,8 @@ svgUtil.create_circleIconFromAddress = function( w, h, addr, parm )
 
         for (var r = 1; r < rows; r++)
         {
-            createBubble( cXpos_middle - (s_r * (xFactor*r)), cYpos_start + (s_r*1*r), s_r, svgElement, counter );
-            createBubble( cXpos_middle + (s_r * (xFactor*r)), cYpos_start + (s_r*1*r), s_r, svgElement, counter );
+            createBubble( cXpos_middle - ((xFactor*r*1.7)), cYpos_start + (s_r*1*r), s_r, svgElement, counter );
+            createBubble( cXpos_middle + ((xFactor*r*1.7)), cYpos_start + (s_r*1*r), s_r, svgElement, counter );
         }
 
         // move down
@@ -402,6 +401,283 @@ svgUtil.create_glowingCircleIconsFromAddress = function( w, h, addr, parm )
     return ret;
 }
 
+svgUtil.create_glowingEtchedCircleIconsFromAddress = function( w, h, addr, parm )
+{
+    //var cols = colArr !== undefined ? colArr : [ "#FF0055", "#AA108D", "#5521C6", "#0033FF" ];
+    var cols = svgUtil.paddCols( addr.substring(2).match(/.{1,6}/g) );
+    var circStroke = parm !== undefined && parm.stroke !== undefined ? parm.stroke : '#fff';
+    var circFill = parm !== undefined && parm.fill !== undefined ? parm.fill : '#000'; //'rgba(232,231,232,0.25)';
+
+    createBubble = function( cx, cy, r, parent, seqId )
+    {
+        var rndId = seqId !== undefined ? seqId : Util.generateRandomNumber( 1 ); //
+        var circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circ.setAttribute( 'class', 'bubble circ_' + rndId );//
+        circ.setAttribute('cx', cx);
+        circ.setAttribute('cy', cy);
+        circ.setAttribute('r', r);
+        parent.appendChild( circ );
+    }
+
+    createBubbleEtched = function( cx, cy, r, parent, seqId )
+    {
+        var rndId = seqId !== undefined ? seqId : Util.generateRandomNumber( 1 ); //
+        var circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circ.setAttribute( 'class', 'etch circ_' + rndId );//
+        circ.setAttribute('cx', cx);
+        circ.setAttribute('cy', cy);
+        circ.setAttribute('r', r);
+        parent.appendChild( circ );
+    }
+
+    createBubbleGlow = function( cx, cy, r, parent, seqId )
+    {
+        var rndId = seqId !== undefined ? seqId : Util.generateRandomNumber( 1 ); //
+        var circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circ.setAttribute( 'class', 'glow glow_' + rndId );//
+        circ.setAttribute('cx', cx);
+        circ.setAttribute('cy', cy);
+        circ.setAttribute('r', r);
+        parent.appendChild( circ );
+    }
+
+    var yRows = 5;
+
+    // larger circles (glow)
+    var s_r = ( w / 2 ) / (yRows + 1.5); //play with last value (1.5) to change depth perception
+    var m_strokeW = s_r / (yRows - 2);
+    var circStrokeW = parm !== undefined ? parm.strokeWidth : m_strokeW;
+
+    var svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svgElement.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    svgElement.setAttribute('width', w + 'px');
+    svgElement.setAttribute('height', h + 'px');
+
+    var glowDefs = svgUtil.createGlowDefs( cols );
+    var svgDefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs'); //
+
+    svgElement.appendChild(svgDefs); // defs for background glow effect
+
+    if ( parm !== undefined && parm.pulse === true )
+    {
+        var svgDevs = document.createElementNS('http://www.w3.org/2000/svg', 'devs'); //
+        var svgStyle = document.createElementNS('http://www.w3.org/2000/svg', 'style'); //
+    
+        svgElement.appendChild(svgDevs); //
+        svgDevs.appendChild(svgStyle); //
+    
+        svgStyle.innerHTML = Templates.css_svg_pulsingGlowCircles;
+    }
+
+    var keys = Object.keys( glowDefs );
+
+
+    svgElement.appendChild(svgDefs);
+
+    for (var i = 0; i < keys.length; i++)
+    {
+        svgDefs.innerHTML += glowDefs[ keys[ i ] ].def; 
+    }
+
+    var svgFilt = document.createElementNS('http://www.w3.org/2000/svg', 'filter'); //
+    svgFilt.setAttribute('id', 'insetShadow');
+    svgFilt.innerHTML = Templates.css_svg_filter_insetShadow;
+    svgElement.appendChild(svgFilt); // defs for background glow effect
+
+    // BOUNDING BG BOX
+    var svgGroupBox;
+    svgGroupBox = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    svgElement.appendChild(svgGroupBox);
+
+    var circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circ.setAttribute('cx', w / 2 );
+    circ.setAttribute('cy', h / 2 );
+    circ.setAttribute('r', ( h - ( m_strokeW * 2 ) ) / 2 );
+    circ.setAttribute('stroke', circStroke ); //#E8E7E7 '#FFF'
+    circ.setAttribute('stroke-width', circStrokeW );
+    circ.setAttribute('fill', circFill ); //#F7F6F6
+    circ.setAttribute( 'shape-rendering', 'geometricPrecision' );
+    svgGroupBox.appendChild( circ );
+
+    // BACKGROUND COLOR BLOCK
+    var svgGlowGroup;
+    svgGlowGroup = document.createElementNS( 'http://www.w3.org/2000/svg', 'g' );
+    svgGlowGroup.setAttribute( 'stroke-linecap', 'square' );
+    svgElement.appendChild( svgGlowGroup );
+
+    // BACKGROUND GLOW 
+    var cXpos_middle = h / 2;
+    var cYpos_start = ( m_strokeW * 2) + s_r;
+    var counter = 1;
+
+    for (var i = 0; i < yRows; i++)
+    {
+        createBubbleGlow( cXpos_middle, cYpos_start, s_r, svgGlowGroup, counter );
+
+        if ( i < (yRows-1) )
+        {
+            createBubbleGlow( cXpos_middle - (s_r * 2), cYpos_start + (s_r * 1.1), s_r, svgGlowGroup, counter );
+            createBubbleGlow( cXpos_middle + (s_r * 2), cYpos_start + (s_r * 1.1), s_r, svgGlowGroup, counter );
+        }
+
+        if ( i < (yRows-2) )
+        {
+            createBubbleGlow( cXpos_middle - (s_r * 4), cYpos_start + (s_r * 2.2), s_r, svgGlowGroup, counter );
+            createBubbleGlow( cXpos_middle + (s_r * 4), cYpos_start + (s_r * 2.2), s_r, svgGlowGroup, counter );
+        }
+
+        // move down
+        cYpos_start += ( s_r * 2 ) + s_r / 2.4;
+        counter ++;
+    }
+
+    var svgGroup;
+    svgGroup = document.createElementNS( 'http://www.w3.org/2000/svg', 'g' );
+    svgGroup.setAttribute( 'stroke-linecap', 'square' );
+    svgElement.appendChild( svgGroup );
+
+    // small circles
+    var s_r = ( w / 3 ) / (yRows + 2.5); // 6.5 // SmallCircle_Radius
+    var m_strokeW = s_r / (yRows - 2.5); // 3 // MainCircle_StrokeWidth
+
+    cXpos_middle = h / 2;
+    cYpos_start = (m_strokeW * 4.5) + s_r;
+    counter = 1;
+
+    for (var i = 0; i < yRows; i++)
+    {
+        createBubble( cXpos_middle, cYpos_start, s_r, svgGroup, counter );
+
+        if ( i < (yRows-1) )
+        {
+            createBubble( cXpos_middle - (s_r * 3.5), cYpos_start + (s_r*2), s_r, svgGroup, counter );
+            createBubble( cXpos_middle + (s_r * 3.5), cYpos_start + (s_r*2), s_r, svgGroup, counter );
+        }
+
+        if ( i < (yRows-2) )
+        {
+            createBubble( cXpos_middle - (s_r * 7), cYpos_start + (s_r*4), s_r, svgGroup, counter );
+            createBubble( cXpos_middle + (s_r * 7), cYpos_start + (s_r*4), s_r, svgGroup, counter );
+        }
+
+        // move down
+        cYpos_start += ( s_r * 3.5 ) + (s_r / 1.5 );
+        counter ++;
+    }
+
+    var svgSunkenGroup;
+    svgSunkenGroup = document.createElementNS( 'http://www.w3.org/2000/svg', 'g' );
+    svgSunkenGroup.setAttribute( 'stroke-linecap', 'square' );
+    svgSunkenGroup.setAttribute( 'filter', 'url(#insetShadow)' );
+    svgElement.appendChild( svgSunkenGroup );
+
+    // small circles
+    var s_r = ( w / 3 ) / (yRows + 2.5) * 0.75; // 6.5 // SmallCircle_Radius
+    var m_strokeW = s_r / (yRows - 2.5); // 3 // MainCircle_StrokeWidth
+
+    cXpos_middle = h / 2;
+    cYpos_start = (m_strokeW * 6.9) + s_r;
+    counter = 1;
+
+    for (var i = 0; i < yRows; i++)
+    {
+        createBubbleEtched( cXpos_middle, cYpos_start, s_r, svgSunkenGroup, counter );
+
+        if ( i < (yRows-1) )
+        {
+            createBubbleEtched( cXpos_middle - (s_r * 4.69), cYpos_start + (s_r*2.62), s_r, svgSunkenGroup, counter );
+            createBubbleEtched( cXpos_middle + (s_r * 4.69), cYpos_start + (s_r*2.62), s_r, svgSunkenGroup, counter );
+        }
+
+        if ( i < (yRows-2) )
+        {
+            createBubbleEtched( cXpos_middle - (s_r * 9.36), cYpos_start + (s_r*5.32), s_r, svgSunkenGroup, counter );
+            createBubbleEtched( cXpos_middle + (s_r * 9.36), cYpos_start + (s_r*5.32), s_r, svgSunkenGroup, counter );
+        }
+
+        // move down
+        cYpos_start += ( s_r * 5 ) + (s_r / 1.8 );
+        counter ++;
+    }
+    //return (svgElement.outerHTML);
+    var dv = $( '<div style="display:none;position:absolute;width:0;height:0;"></div>' );
+    var id = '_dvcirc' + new Date().getTime();
+
+    dv.attr( 'id', id );
+
+    $( 'body' ).append( dv );
+    dv.html( svgElement.outerHTML );
+
+    var orbs = dv.find( '.glow');
+    var iOffset = 0, iCol;
+
+    $.each( orbs, function( i, orb ){
+
+        if ( ( i - (iOffset * cols.length) ) < cols.length ) 
+        {
+            // 
+        }
+        else
+        {
+            iOffset ++;
+        }
+
+        iCol = ( i - (iOffset * cols.length) );
+
+        //fill="url(#g)" filter="url(#sofGlow)"
+        $( orb ).attr( 'fill', 'url(#' + glowDefs[ cols[ iCol ] ].radialId + ')' );
+        $( orb ).attr( 'filter', 'url(#' + glowDefs[ cols[ iCol ] ].glowId + ')' );
+
+    });
+
+    var bubbles = dv.find( '.bubble');
+    var iOffset = 0, iCol;
+
+    $.each( bubbles, function( i, circ ){
+
+        if ( ( i - (iOffset * cols.length) ) < cols.length ) 
+        {
+            // 
+        }
+        else
+        {
+            iOffset ++;
+        }
+
+        iCol = ( i - (iOffset * cols.length) );
+
+        $( circ ).attr( 'fill', '#' + cols[ iCol ] );
+
+    });
+
+    var etches = dv.find( '.etch');
+    var iOffset = 0, iCol;
+
+    $.each( etches, function( i, circ ){
+
+        if ( ( i - (iOffset * cols.length) ) < cols.length ) 
+        {
+            // 
+        }
+        else
+        {
+            iOffset ++;
+        }
+
+        iCol = ( i - (iOffset * cols.length) );
+
+        $( circ ).attr( 'fill', '#' + cols[ iCol ] );
+
+    });
+
+    var ret = dv.html();
+
+    dv.remove();
+
+    return ret;
+}
+
 svgUtil.createGlowDefs = function( colors )
 {
     var retAll = {};
@@ -623,7 +899,7 @@ svgUtil.create_hexagonIconFromAddress = function( w, h, addr, parm )
     var cXpos_middle = h/2;
     var cYpos_start = s_r;
     var counter = 1;
-    var xFactor = h_rad/10; //( w_rad > h_rad ? w_rad/10 : h_rad/10 );
+    var xFactor = s_r; //h_rad/10; //( w_rad > h_rad ? w_rad/10 : h_rad/10 );
 
 
     for (var i = 0; i < yRows; i++)
@@ -635,8 +911,8 @@ svgUtil.create_hexagonIconFromAddress = function( w, h, addr, parm )
 
         for (var r = 1; r < rows; r++)
         {
-            createBubble( cXpos_middle - (s_r * (xFactor*r)), cYpos_start + (s_r*1*r), s_r, svgGroup, counter );
-            createBubble( cXpos_middle + (s_r * (xFactor*r)), cYpos_start + (s_r*1*r), s_r, svgGroup, counter );
+            createBubble( cXpos_middle - (xFactor*r*1.7), cYpos_start + (s_r*1*r), s_r, svgGroup, counter );
+            createBubble( cXpos_middle + (xFactor*r*1.7), cYpos_start + (s_r*1*r), s_r, svgGroup, counter );
         }
 
         // move down
@@ -748,9 +1024,9 @@ svgUtil.create_hexagonHoneyConeIconFromAddress = function( w, h, addr, parm )
     svgElement.appendChild(svgGroup);
 
     var cXpos_middle = h/2;
-    var cYpos_start = s_r*1.1;
+    var cYpos_start = s_r + (circStrokeW/2);// + (s_r / yRows);
     var counter = 1;
-    var xFactor = h_rad/10; //( w_rad > h_rad ? w_rad/10 : h_rad/10 );
+    var xFactor = s_r; //h_rad/10; //( w_rad > h_rad ? w_rad/10 : h_rad/10 );
 
 
     for (var i = 0; i < yRows; i++)
@@ -762,8 +1038,8 @@ svgUtil.create_hexagonHoneyConeIconFromAddress = function( w, h, addr, parm )
 
         for (var r = 1; r < rows; r++)
         {
-            createBubble( cXpos_middle - (s_r * (xFactor*r))-(2*r), cYpos_start + (s_r*1*r), s_r, svgGroup, counter );
-            createBubble( cXpos_middle + (s_r * (xFactor*r))+(2*r), cYpos_start + (s_r*1*r), s_r, svgGroup, counter );
+            createBubble( cXpos_middle - (xFactor*r*1.7), cYpos_start + (s_r*1*r), s_r, svgGroup, counter );
+            createBubble( cXpos_middle + (xFactor*r*1.7), cYpos_start + (s_r*1*r), s_r, svgGroup, counter );
         }
 
         // move down
