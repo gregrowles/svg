@@ -56,13 +56,39 @@
         transform-origin: center;
         transform: rotate(30deg);
     }
+    .etch {
+        /*filter: invert(0.25);
+        opacity: 0.5;*/
+        stroke-width: 1;
+        stroke: rgba(255,255,255,0.1);
+    }
+
+    .floater {
+        position: fixed;
+        left:20px;top:20px;
+        width:fit-content;
+        background-color:#fff;
+        border-radius: 5px;border: 1px solid #c0c0c0;
+        padding:10px;
+        font-size: 0.85em;
+        font-family: 'Courier New', Courier, monospace;
+        opacity: 0.25;
+    }
+    .floater:hover {
+        opacity: 0.9;
+    }
+    input {
+        margin: 2px;
+    }
 </style>
 
 
 <body style="">
 
-<div style="position: fixed;left:20px;top:20px;width:fit-content;background-color:#fff;border-radius: 5px;border: 1px solid #c0c0c0;padding:10px">
-    <input type="text" class="addr" style="font-size: 0.7em;" value="0xF35fe43e9bcf57f1551eF013f52fDc0ec1cA1BE1">
+<div class="floater">
+    <input type="text" class="addr" style="" value="0xF35fe43e9bcf57f1551eF013f52fDc0ec1cA1BE1">
+    <br>
+    <input type="text" class="size" style="width:32px;text-align: center;" value="80">px
     <br><br>
     <button onclick="runShapes()">Run</button>
 </div>
@@ -74,34 +100,42 @@
 
 runShapes = function()
 {
-    var optAddr = $( '.addr').val(); //'0x1FF9aCBA219E14876DBB54eA5d48D61b6684219D';
-
-    var myGlowDark = $( svgUtil.create_glowingCircleIconsFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 0, "pulse": true } ) );
+    var optAddr = $( '.addr').val(); // 0x1FF9aCBA219E14876DBB54eA5d48D61b6684219D, 0xD503d8369ed6CA01321456b070CAbd34449642b8;
+    var size = $( '.size').val();
+    var myGlowDark = $( svgUtil.create_glowingCircleIconsFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true } ) );
     $( '.targDark' ).empty().append( myGlowDark );
 
-    var myGlowLight = $( svgUtil.create_glowingCircleIconsFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 0, "pulse": true } ) );
+    var myGlowLight = $( svgUtil.create_glowingCircleIconsFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true } ) );
     $( '.targLight' ).empty().append( myGlowLight );
     myGlowLight.css( 'filter', 'drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))')
 
-    var myCircsDark = $( svgUtil.create_circleIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 0, "pulse": true } ) );
+    var myGlowDark = $( svgUtil.create_glowingEtchedCircleIconsFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true } ) );
+    $( '.targDark' ).append( myGlowDark );
+
+    var myGlowLight = $( svgUtil.create_glowingEtchedCircleIconsFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true } ) );
+    $( '.targLight' ).append( myGlowLight );
+    myGlowLight.css( 'filter', 'drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))')
+
+
+    var myCircsDark = $( svgUtil.create_circleIconFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true, "rows": 3 } ) );
     $( '.targDark' ).append( myCircsDark );
 
-    var myCircsLight = $( svgUtil.create_circleIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 0, "pulse": true } ) );
+    var myCircsLight = $( svgUtil.create_circleIconFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true, "rows": 3 } ) );
     $( '.targLight' ).append( myCircsLight );
     myCircsLight.css( 'filter', 'drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))');
 
 
-    var myHexDark = $( svgUtil.create_hexagonIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 0, "pulse": true, "rows": 3 } ) );
+    var myHexDark = $( svgUtil.create_hexagonIconFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true, "rows": 3 } ) );
     $( '.targDark' ).append( myHexDark );
 
-    var myHexLight = $( svgUtil.create_hexagonIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 0, "pulse": true, "rows": 3 } ) );
+    var myHexLight = $( svgUtil.create_hexagonIconFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true, "rows": 3 } ) );
     $( '.targLight' ).append( myHexLight );
     myHexLight.css( 'filter', 'drop-shadow( 12px 5px 2px rgba(0, 0, 0, .7))');
 
-    var myHexDark = $( svgUtil.create_hexagonHoneyConeIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 4, "pulse": true, "rows": 3 } ) );
+    var myHexDark = $( svgUtil.create_hexagonHoneyConeIconFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true, "rows": 3 } ) );
     $( '.targDark' ).append( myHexDark );
 
-    var myHexLight = $( svgUtil.create_hexagonHoneyConeIconFromAddress( 160, 160, optAddr, { "stroke": "#000", "fill": "#000", "strokeWidth": 4, "pulse": true, "rows": 3 } ) );
+    var myHexLight = $( svgUtil.create_hexagonHoneyConeIconFromAddress( size, size, optAddr, { "stroke": "none", "fill": "#000", "strokeWidth": 0, "pulse": true, "rows": 3 } ) );
     $( '.targLight' ).append( myHexLight );
     myHexLight.css( 'filter', 'drop-shadow( 19px 25px 2px rgba(0, 0, 0, .4))');
 
