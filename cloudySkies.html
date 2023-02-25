@@ -1,0 +1,75 @@
+<html>
+
+<head>
+
+<style>
+html, body { 
+  margin: 0; 
+}
+body:after {
+  content: 'click to update';
+  font-size: .8em;
+  color: rgba(0, 0, 0, .3);
+  position: fixed;
+  width: 100%;
+  bottom: 1em;
+  text-align: center;
+}
+
+#cloud {
+  overflow: hidden;
+  width: 1px; height: 1px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  filter: url(#filter);
+  transition: all 25s, transform 25s;
+}
+</style>
+</head>
+
+<div id="cloud"></div>
+
+<svg width="0">
+  <filter id="filter">
+    <feTurbulence type="fractalNoise" baseFrequency=".01" numOctaves="30" />
+    <feDisplacementMap in="SourceGraphic" scale="200" /> 
+  </filter>
+</svg>
+
+<script language="javascript">
+
+function rn(from, to) {
+  return ~~(Math.random() * (to - from + 1)) + from;
+}
+
+function rs() {
+  return arguments[rn(1, arguments.length) - 1];
+}
+
+function boxShadows(max) {
+  let ret = [];
+  for (let i = 0; i < max; ++i) {
+    ret.push(`
+      ${ rn(1, 100) }vw ${ rn(1, 100) }vh ${ rn(20, 40) }vmin ${ rn(1, 20) }vmin
+      ${ rs( '#FEFEFE', '#B4DBEE', '#A2D6EF', '#6CC6F3', '#00A7FA' ) }
+    `)
+  }
+  return ret.join(',');
+}
+
+const cloud = document.querySelector('#cloud');
+function update() {
+  //alert( cloud.style.transitionProperty );
+  cloud.style.boxShadow = boxShadows(50); 
+  //cloud.style.transition = 'all 60s, transform 60s';
+}
+
+window.addEventListener('load', update); 
+
+setInterval( function(){
+  update()
+}, 25000)
+
+</script>
+
+</html>
